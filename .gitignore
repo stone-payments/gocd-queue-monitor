@@ -8,7 +8,7 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-env/
+venv/
 build/
 develop-eggs/
 dist/
@@ -99,3 +99,9 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+# Vs code configs
+.vscode/
+
+# Test files
+test.xml

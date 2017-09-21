@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">    
+    <title>GoCD Queue Monitor</title>
+</head>
+<body>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-3">GoCD Queue Monitor</h1>
+            <p class="lead">An app to monitor how many pipelines and jobs are waiting to be executed in GoCD</p>
+        </div>
+    </div>
+    
+    <div class="container">                    
+        <h2>Pipelines</h2>
+        {% if pipelines %}
+        <ol>            
+            {% for pipeline in pipelines %}
+            <li>
+                {{pipeline.name}} Status: 
+                {% if pipeline.status is equalto 'paused' %}
+                    <span class="badge badge-warning">Paused</span>                
+                {% endif%} 
+                {% if pipeline.status is equalto 'schedulable' %}
+                    <span class="badge badge-info">Schedulable</span>                
+                {% endif%} 
+                {% if pipeline.status is equalto 'locked' %}
+                    <span class="badge badge-dark">Locked</span>                
+                {% endif%} 
+                {% if pipeline.status is equalto 'unknown' %}
+                    <span class="badge badge-secondary">Waiting agents</span>                
+                {% endif%}
+                
+                <ul>
+                    {% for job in pipeline.jobs %}
+                        <li>{{job}}</li>
+                    {% endfor %}        
+                </ul>
+            </li>
+            {% endfor %}
+        </ol>
+        {% else %}
+        <h2>There is no pipelines in Queue!</h2>
+        {% endif %}
+    </div>
+    <script src="../static/js/jquery-3.2.1.min.js"></script>    
+    <script src="../static/js/bootstrap.min.js"></script>    
+</body>
+</html>
