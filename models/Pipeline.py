@@ -20,7 +20,7 @@ class Pipeline:
         self.status = status
 
     def update_pipeline_status_from_api(self):
-        response = requests.get(GOCD_API_URL + 'pipelines/'+ self.name +'/status', auth=(GOCD_USER, GOCD_PASSWORD), verify=False)    
+        response = requests.get(GOCD_API_URL + '/pipelines/'+ self.name +'/status', auth=(GOCD_USER, GOCD_PASSWORD), verify=False)    
         statusJson = json.loads(response.text)
 
         if statusJson['paused'] is True:

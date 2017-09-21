@@ -6,7 +6,7 @@ An web app to monitor the GoCD continuos delivery server, showing the current qu
 - Python 3
 - Pip
 
-Run to install the project dependencies:
+Use pip to install the project dependencies:
 ```
 pip install -r requirements.txt
 ```

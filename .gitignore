@@ -102,6 +102,6 @@ ENV/
 
 # Vs code configs
 .vscode/
-
+.idea/
 # Test files
 test.xml

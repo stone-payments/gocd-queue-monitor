@@ -15,9 +15,4 @@ class Job:
             self.resources.append(resource)
 
     def __str__(self):
-        name = 'Job: ' + self.name        
-        name += ' | Resources: [ '
-        for resource in self.resources:
-            name +=  '%s ' % (resource)
-        name += ' ] '    
-        return name
+        return self.name
