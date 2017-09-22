@@ -1,13 +1,14 @@
-import os
-import requests
 import json
-import asyncio
-from bs4 import BeautifulSoup
-from models.Pipeline import Pipeline
-from models.Job import Job
-from models.Agent import Agent
+import os
 
+import requests
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+from src.app.models.Agent import Agent
+from src.app.models.Job import Job
+
+from src.app.models.Pipeline import Pipeline
+
 load_dotenv('./.env')
 from flask import Flask, render_template
 app = Flask(__name__)
@@ -19,9 +20,8 @@ GOCD_PASSWORD = os.environ.get("GOCD_PASSWORD")
 
 @app.route('/')
 def main():
-    loop = asyncio.get_event_loop()
     scheduled_jobs_xml = get_scheduled_jobs_xml()
-    scheduled_pipelines = get_scheduled_pipelines(scheduled_jobs_xml)
+    scheduled_pipelines = get_scheduled_pipelines_from_job_xml(scheduled_jobs_xml)
     active_agents = get_active_agents()
     pipelines_with_updated_status = update_pipelines_status(scheduled_pipelines)
 
@@ -36,24 +36,21 @@ def get_scheduled_jobs_xml():
     scheduled_jobs_xml = soup.find_all('job')    
     return scheduled_jobs_xml
 
-def extract_pipeline_name(full_pipeline_name):
-    splitted_build_locator = full_pipeline_name.split('/')
-    pipeline_name = splitted_build_locator[0]    
-    return pipeline_name
 
-def get_scheduled_pipelines(jobs_xml):
+
+def get_scheduled_pipelines_from_job_xml(jobs_xml):
     scheduled_pipelines = []
     
     for job_xml in jobs_xml:        
         full_pipeline_name = job_xml.find('buildLocator').string
-        pipeline_name = extract_pipeline_name(full_pipeline_name)
+        pipeline_name = Pipeline.extract_pipeline_name(full_pipeline_name)
         job_name = job_xml['name']
         
         pipeline = Pipeline(pipeline_name)
             
         job = Job(job_name)
-        job.add_resources_from_xml(job_xml)                    
-        
+        job.add_resources_from_xml(job_xml)
+
         if(pipeline in scheduled_pipelines):
             index = scheduled_pipelines.index(pipeline)                      
             pipeline = scheduled_pipelines[index]

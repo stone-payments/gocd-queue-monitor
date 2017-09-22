@@ -1,0 +1,52 @@
+environments:
+  Production:
+    pipelines:
+      - GoCDQueueMonitor-BuildDeploy
+pipelines:
+  GoCDQueueMonitor-BuildDeploy:
+    group: EvolucaoInfra
+    materials:
+      git-repo:
+        git: git@github.com:stone-payments/gocd-queue-monitor.git
+        branch: master
+    stages:
+      environment_variables:
+        APP_NAME: GoCDQueueMonitor
+      - Build:
+          clean_workspace: true
+          jobs:
+            UnitTests:
+              elastic_profile_id: docker.python3
+              tasks:
+               - exec:
+                   command: pip3
+                   arguments:
+                    - install
+                    - -r
+                    - requirements.txt
+               - exec:
+                   command: pytest
+            Zip:
+              elastic_profile_id: docker.python3
+              tasks:
+                - exec:
+                    command: /bin/bash
+                    arguments:
+                     - -c
+                     - zip -r dist.zip .
+            SetTsuruEnvs:
+              elastic_profile_id: docker.python3
+              task:
+                - exec:
+                    command: /bin/bash
+                    arguments:
+                    - -c
+                    -  python /go/tsuru-pydeploy/tsuru_set_env.py -a $APP_NAME -u $TSURU_USER -p $TSURU_PASSWORD -s $TSURU_HOST
+            DeployZipToTsuru:
+              elastic_profile_id: docker.python3
+              task:
+                - exec:
+                    command: /bin/bash
+                    arguments:
+                    - -c
+                    - python /go/tsuru-pydeploy/tsuru_app_deploy.py -a $APP_NAME -i ./dist.zip -u $TSURU_USER -p $TSURU_PASSWORD -s $TSURU_HOST

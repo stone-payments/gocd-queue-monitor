@@ -1,0 +1,17 @@
+<job name="BuildJob" id="123456">
+        <link rel="self" href="https://example.gocd.com.br:8888/go/tab/build/detail/ExamplePipelineBuild/2/Build/1/BuildJob"/>
+        <buildLocator>ExamplePipelineBuild/2/Build/1/BuildJob</buildLocator>
+</job>
+
+<job name="BuildJob" id="123456">
+        <link rel="self" href="https://example.gocd.com.br:8888/go/tab/build/detail/ExamplePipelineBuild/2/Build/1/BuildJob"/>
+        <buildLocator>ExamplePipelineBuild/2/Build/1/BuildJob</buildLocator>
+        <resources>
+            <resource>
+                <![CDATA[.net builder]]>
+            </resource>
+            <resource>
+                <![CDATA[windows]]>
+            </resource>
+        </resources>
+</job>

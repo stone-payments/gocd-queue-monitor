@@ -19,6 +19,9 @@ class Pipeline:
     def set_status(self, status):
         self.status = status
 
+    def get_name(self):
+        return self.name
+
     def update_pipeline_status_from_api(self):
         response = requests.get(GOCD_API_URL + '/pipelines/'+ self.name +'/status', auth=(GOCD_USER, GOCD_PASSWORD), verify=False)    
         statusJson = json.loads(response.text)
@@ -30,7 +33,13 @@ class Pipeline:
         elif statusJson['locked']:
             self.status = 'locked'
         else:
-            self.status = 'unknown'    
+            self.status = 'unknown'
+
+    @staticmethod
+    def extract_pipeline_name(full_pipeline_name):
+        splitted_build_locator = full_pipeline_name.split('/')
+        pipeline_name = splitted_build_locator[0]
+        return pipeline_name
 
     def add_job(self, job):
         self.jobs.append(job)

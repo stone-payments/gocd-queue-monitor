@@ -1,0 +1,12 @@
+<job name="MSBuildDebug" id="192380">
+        <link rel="self" href="https://cd.stone.com.br:8154/go/tab/build/detail/WatchListPublicAPI-Choco/2/Build/1/MSBuildDebug"/>
+        <buildLocator>WatchListPublicAPI-Choco/2/Build/1/MSBuildDebug</buildLocator>
+        <resources>
+            <resource>
+                <![CDATA[.net builder]]>
+            </resource>
+            <resource>
+                <![CDATA[windows]]>
+            </resource>
+        </resources>
+    </job>
