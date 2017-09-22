@@ -10,9 +10,9 @@ pipelines:
         git: git@github.com:stone-payments/gocd-queue-monitor.git
         branch: master
     stages:
-      environment_variables:
-        APP_NAME: GoCDQueueMonitor
-      - Build:
+      - BuildDeploy:
+          environment_variables:
+            APP_NAME: GoCDQueueMonitor
           clean_workspace: true
           jobs:
             UnitTests:
