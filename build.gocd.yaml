@@ -36,7 +36,7 @@ pipelines:
                      - zip -r dist.zip .
             SetTsuruEnvs:
               elastic_profile_id: docker.python3
-              task:
+              tasks:
                 - exec:
                     command: /bin/bash
                     arguments:
@@ -44,7 +44,7 @@ pipelines:
                     -  python /go/tsuru-pydeploy/tsuru_set_env.py -a $APP_NAME -u $TSURU_USER -p $TSURU_PASSWORD -s $TSURU_HOST
             DeployZipToTsuru:
               elastic_profile_id: docker.python3
-              task:
+              tasks:
                 - exec:
                     command: /bin/bash
                     arguments:
