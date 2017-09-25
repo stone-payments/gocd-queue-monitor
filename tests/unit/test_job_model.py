@@ -9,14 +9,16 @@ def test_should_extract_resources_from_job_xml():
     job = Job('examplejob')
     test_xml = open('tests/files/complete_job.xml')
     job_xml = BeautifulSoup(test_xml, "xml")
-
+    print(job)
+    print(test_xml)
+    print(job_xml)
     job.add_resources_from_xml(job_xml)
 
     resource1 = Resource('.net builder')
     resource2 = Resource('windows')
     expected_resources = [resource1, resource2]
 
-    assert (len(job.get_resources()) == len(expected_resources)) and (expected_resources == job.get_resources())
+    assert (len(job.get_resources()) == len(expected_resources) +1) and (expected_resources == job.get_resources())
 
 def test_should_extract_resources_from_job_xml_without_resources():
     job = Job('examplejob')
