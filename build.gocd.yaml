@@ -23,7 +23,10 @@ pipelines:
                     - -r
                     - requirements.txt
                - exec:
-                   command: pytest
+                   command: python
+                   arguments:
+                   - m
+                   - pytest
       - Zip:
           jobs:
             Zip:
