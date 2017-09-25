@@ -7,8 +7,8 @@ from bs4 import BeautifulSoup
 
 def test_should_extract_resources_from_job_xml():
     job = Job('examplejob')
-    test_xml = open('tests/files/complete_job.xml')
-    print(job)
+    test_xml = open('tests/files/complete_job.xml', encoding='utf-8')
+    print(job.read())
     print(test_xml)
     job_xml = BeautifulSoup(test_xml, "xml")
     print(job_xml)
