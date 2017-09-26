@@ -20,6 +20,11 @@ GOCD_PASSWORD = os.environ.get("GOCD_PASSWORD")
 
 @app.route('/')
 def main():
+
+    return render_template('works.html')
+
+@app.route('/home')
+def home():
     scheduled_jobs_xml = get_scheduled_jobs_xml()
     scheduled_pipelines = get_scheduled_pipelines_from_job_xml(scheduled_jobs_xml)
     active_agents = get_active_agents()
@@ -90,7 +95,6 @@ def get_active_agents():
     return agents
 
 
-@app.route('')
 def is_elastic_agent(agent):
     if 'elastic_agent_id' in agent:
         return True
@@ -124,4 +128,4 @@ def get_agent_status(agent):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='8888')
+    app.run(host='0.0.0.0', port=8888)
