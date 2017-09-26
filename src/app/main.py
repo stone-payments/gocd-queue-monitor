@@ -37,7 +37,6 @@ def get_scheduled_jobs_xml():
     return scheduled_jobs_xml
 
 
-
 def get_scheduled_pipelines_from_job_xml(jobs_xml):
     scheduled_pipelines = []
     
@@ -67,6 +66,7 @@ def update_pipelines_status(pipelines):
         pipeline.update_pipeline_status_from_api()
     return pipelines    
 
+
 @app.route('/agents')
 def get_active_agents():
 
@@ -89,11 +89,14 @@ def get_active_agents():
 
     return agents
 
+
+@app.route('')
 def is_elastic_agent(agent):
     if 'elastic_agent_id' in agent:
         return True
     else:
         return False
+
 
 def is_agent_active(agent):
     if agent['build_state'] != 'Unknown':
@@ -101,11 +104,13 @@ def is_agent_active(agent):
     else: 
         return False
 
+
 def get_agent_resources(agent):
     agent_resources = []
     for resource in agent['resources']:
         agent_resources.append(resource)
     return agent_resources            
+
 
 def get_agent_environments(agent):
     agent_envs = []    
@@ -113,8 +118,10 @@ def get_agent_environments(agent):
         agent_envs.append(environment)
     return agent_envs
 
+
 def get_agent_status(agent):
     return agent['build_state']
 
+
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port='8888')

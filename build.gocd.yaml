@@ -49,6 +49,16 @@ pipelines:
             SetTsuruEnvs:
               elastic_profile_id: docker.tsuru-pydeploy
               tasks:
+                - exec:
+                    command: /bin/bash
+                    arguments:
+                    - -c
+                    -  python /go/tsuru-pydeploy/tsuru_set_env.py -a $APP_NAME -u $TSURU_USER -p $TSURU_PASSWORD -s $TSURU_HOST
+      - DeployZipToTsuru:
+          jobs:
+            DeployZipToTsuru:
+              elastic_profile_id: docker.tsuru-pydeploy
+              tasks:
                 - fetch:
                     run_if: any
                     pipeline:
@@ -61,14 +71,4 @@ pipelines:
                     command: /bin/bash
                     arguments:
                     - -c
-                    -  python /go/tsuru-pydeploy/tsuru_set_env.py -a $APP_NAME -u $TSURU_USER -p $TSURU_PASSWORD -s $TSURU_HOST
-      - DeployZipToTsuru:
-          jobs:
-            DeployZipToTsuru:
-              elastic_profile_id: docker.tsuru-pydeploy
-              tasks:
-                - exec:
-                    command: /bin/bash
-                    arguments:
-                    - -c
-                    - python /go/tsuru-pydeploy/tsuru_app_deploy.py -a $APP_NAME -i ./dist.zip -u $TSURU_USER -p $TSURU_PASSWORD -s $TSURU_HOST
+                    - python /go/tsuru-pydeploy/tsuru_app_deploy.py -a $APP_NAME -i dist.zip -u $TSURU_USER -p $TSURU_PASSWORD -s $TSURU_HOST
