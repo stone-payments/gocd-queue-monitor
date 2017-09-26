@@ -1,4 +1,4 @@
-from src.app.models.Resource import Resource
+from app.models.Resource import Resource
 
 class Job:
 
