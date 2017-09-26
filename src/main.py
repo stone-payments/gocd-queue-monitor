@@ -1,22 +1,23 @@
 import json
-import os
+from os import path,environ
 
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from src.app.models.Agent import Agent
-from src.app.models.Job import Job
-
-from src.app.models.Pipeline import Pipeline
-
-load_dotenv('../.env')
+from app.models.Agent import Agent
+from app.models.Job import Job
+from app.models.Pipeline import Pipeline
 from flask import Flask, render_template
+
+
+load_dotenv(path.dirname(__file__) + '/../' + '.env')
+
 app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
 
-GOCD_API_URL = os.environ.get("GOCD_API_URL")
-GOCD_USER = os.environ.get("GOCD_USER")
-GOCD_PASSWORD = os.environ.get("GOCD_PASSWORD")
-PORT = int(os.environ.get("PORT"))
+GOCD_API_URL = environ.get("GOCD_API_URL")
+GOCD_USER = environ.get("GOCD_USER")
+GOCD_PASSWORD = environ.get("GOCD_PASSWORD")
+PORT = int(environ.get("PORT"))
 
 
 
