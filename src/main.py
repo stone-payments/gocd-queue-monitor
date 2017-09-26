@@ -4,10 +4,10 @@ import os
 import requests
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-from app.models.Agent import Agent
-from app.models.Job import Job
+from src.app.models.Agent import Agent
+from src.app.models.Job import Job
 
-from app.models.Pipeline import Pipeline
+from src.app.models.Pipeline import Pipeline
 
 load_dotenv('../.env')
 from flask import Flask, render_template
@@ -16,13 +16,12 @@ app = Flask(__name__, template_folder='app/templates', static_folder='app/static
 GOCD_API_URL = os.environ.get("GOCD_API_URL")
 GOCD_USER = os.environ.get("GOCD_USER")
 GOCD_PASSWORD = os.environ.get("GOCD_PASSWORD")
-PORT = os.environ.get("PORT")
+PORT = int(os.environ.get("PORT"))
+
 
 
 @app.route('/')
 def main():
-    print(PORT)
-    print(GOCD_PASSWORD)
     return render_template('works.html')
 
 @app.route('/home')
@@ -32,7 +31,7 @@ def home():
     active_agents = get_active_agents()
     pipelines_with_updated_status = update_pipelines_status(scheduled_pipelines)
 
-    return render_template('app/templates/index.html', pipelines=pipelines_with_updated_status, agents=active_agents)
+    return render_template('index.html', pipelines=pipelines_with_updated_status, agents=active_agents)
 
 
 def get_scheduled_jobs_xml():

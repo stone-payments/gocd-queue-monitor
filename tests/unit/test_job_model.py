@@ -1,8 +1,6 @@
 from src.app.models.Job import Job
-from src.app.models.Resource import  Resource
+from src.app.models.Resource import Resource
 from bs4 import BeautifulSoup
-
-
 
 
 def test_should_extract_resources_from_job_xml():
@@ -17,6 +15,7 @@ def test_should_extract_resources_from_job_xml():
     expected_resources = [resource1, resource2]
 
     assert (len(job.get_resources()) == len(expected_resources)) and (expected_resources == job.get_resources())
+
 
 def test_should_extract_resources_from_job_xml_without_resources():
     job = Job('examplejob')
