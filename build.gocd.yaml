@@ -28,9 +28,14 @@ pipelines:
                    - -m
                    - pytest
       - Zip:
+          fetch_materials: yes
           jobs:
             Zip:
-              elastic_profile_id: docker.python3
+              elastic_profile_id: docker.ubuntu
+              artifacts:
+                - build:
+                    source: dist.zip
+                    destination:
               tasks:
                 - exec:
                     command: /bin/bash
@@ -40,8 +45,16 @@ pipelines:
       - SetTsuruEnvs:
           jobs:
             SetTsuruEnvs:
-              elastic_profile_id: docker.python3
+              elastic_profile_id: docker.tsuru-pydeploy
               tasks:
+                - fetch:
+                    run_if: any
+                    pipeline:
+                    stage: Zip
+                    job: Zip
+                    is_file: yes
+                    source: dist.zip
+                    destination:
                 - exec:
                     command: /bin/bash
                     arguments:
@@ -50,7 +63,7 @@ pipelines:
       - DeployZipToTsuru:
           jobs:
             DeployZipToTsuru:
-              elastic_profile_id: docker.python3
+              elastic_profile_id: docker.tsuru-pydeploy
               tasks:
                 - exec:
                     command: /bin/bash
