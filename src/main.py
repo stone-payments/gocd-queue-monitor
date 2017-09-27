@@ -1,133 +1,56 @@
-import json
-from os import path,environ
-
-import requests
-from bs4 import BeautifulSoup
+from os import path
+from app.parsers.AgentParser import AgentParser
+from app.parsers.PipelineParser import PipelineParser
+from app.services.APIConsumer import APIConsumer
 from dotenv import load_dotenv
-from app.models.Agent import Agent
-from app.models.Job import Job
-from app.models.Pipeline import Pipeline
+from app.utils.EnvironmentVariables import EnvironmentVariables
 from flask import Flask, render_template
+
+from apscheduler.schedulers.background import BackgroundScheduler
 
 
 load_dotenv(path.dirname(__file__) + '/../' + '.env')
-
+env_vars = EnvironmentVariables()
 app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
 
-GOCD_API_URL = environ.get("GOCD_API_URL")
-GOCD_USER = environ.get("GOCD_USER")
-GOCD_PASSWORD = environ.get("GOCD_PASSWORD")
-PORT = int(environ.get("PORT"))
+@app.route('/version')
+def version():
+    return "Api version" + APIConsumer.get_api_version()
 
 
+scheduler = BackgroundScheduler()
+job = scheduler.add_job(version, 'interval', seconds=3)
+# scheduler.start()
 
-@app.route('/')
+@app.route('/works')
 def main():
     return render_template('works.html')
 
-@app.route('/home')
+
+@app.route('/')
 def home():
-    scheduled_jobs_xml = get_scheduled_jobs_xml()
-    scheduled_pipelines = get_scheduled_pipelines_from_job_xml(scheduled_jobs_xml)
-    active_agents = get_active_agents()
-    pipelines_with_updated_status = update_pipelines_status(scheduled_pipelines)
+    scheduled_jobs_xml = APIConsumer.get_scheduled_jobs_xml()
+    pipeline_parser = PipelineParser()
+    scheduled_pipelines = pipeline_parser.get_scheduled_pipelines_from_job_xml(scheduled_jobs_xml)
+
+    pipelines_with_updated_status = []
+    for pipeline in scheduled_pipelines:
+        pipeline.update_pipeline_status_from_api()
+        pipelines_with_updated_status.append(pipeline)
+
+    agents_json = APIConsumer.get_agents_json()
+    agent_parser = AgentParser(agents_json)
+    active_agents = agent_parser.get_active_agents()
+
 
     return render_template('index.html', pipelines=pipelines_with_updated_status, agents=active_agents)
 
 
-def get_scheduled_jobs_xml():
-    response = requests.get(GOCD_API_URL + '/jobs/scheduled.xml', auth=(GOCD_USER, GOCD_PASSWORD), verify=False)
-    xml = response.text
-    # xml = open("./test.xml")
-    soup = BeautifulSoup(xml, "xml")
-    scheduled_jobs_xml = soup.find_all('job')    
-    return scheduled_jobs_xml
-
-
-def get_scheduled_pipelines_from_job_xml(jobs_xml):
-    scheduled_pipelines = []
-    
-    for job_xml in jobs_xml:        
-        full_pipeline_name = job_xml.find('buildLocator').string
-        pipeline_name = Pipeline.extract_pipeline_name(full_pipeline_name)
-        job_name = job_xml['name']
-        
-        pipeline = Pipeline(pipeline_name)
-            
-        job = Job(job_name)
-        job.add_resources_from_xml(job_xml)
-
-        if(pipeline in scheduled_pipelines):
-            index = scheduled_pipelines.index(pipeline)                      
-            pipeline = scheduled_pipelines[index]
-        else:            
-            scheduled_pipelines.append(pipeline)
-            
-        pipeline.add_job(job)
-        
-    return scheduled_pipelines
-
-
-def update_pipelines_status(pipelines):
-    for pipeline in pipelines:
-        pipeline.update_pipeline_status_from_api()
-    return pipelines    
-
 
 @app.route('/agents')
-def get_active_agents():
-
-    headers = {'accept': "application/vnd.go.cd.v4+json"}
-
-    response = requests.get(GOCD_API_URL + '/agents',auth=(GOCD_USER, GOCD_PASSWORD), headers=headers, verify=False)
-
-    response_json = json.loads(response.text)
-    agents_list = response_json['_embedded']['agents']
-    agents=[]
-    
-    for agent in agents_list:        
-        if(is_agent_active(agent) and not is_elastic_agent(agent)):        
-            agent_name = agent['hostname']
-            agent_envs = get_agent_environments(agent)
-            agent_resources = get_agent_resources(agent)
-            agent_status = get_agent_status(agent)
-            agent_obj = Agent(agent_name,agent_resources,agent_envs,agent_status)
-            agents.append(agent_obj)
-
-    return agents
-
-
-def is_elastic_agent(agent):
-    if 'elastic_agent_id' in agent:
-        return True
-    else:
-        return False
-
-
-def is_agent_active(agent):
-    if agent['build_state'] != 'Unknown':
-        return True
-    else: 
-        return False
-
-
-def get_agent_resources(agent):
-    agent_resources = []
-    for resource in agent['resources']:
-        agent_resources.append(resource)
-    return agent_resources            
-
-
-def get_agent_environments(agent):
-    agent_envs = []    
-    for environment in agent['environments']:
-        agent_envs.append(environment)
-    return agent_envs
-
-
-def get_agent_status(agent):
-    return agent['build_state']
+def agents():
+    return 'agents'
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=PORT)
+    app.run(host='0.0.0.0', port=env_vars.port())

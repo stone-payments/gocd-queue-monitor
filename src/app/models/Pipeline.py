@@ -2,6 +2,8 @@ import os
 import requests
 import json
 
+from app.services.APIConsumer import APIConsumer
+
 GOCD_API_URL = os.environ.get("GOCD_API_URL")
 GOCD_USER = os.environ.get("GOCD_USER")
 GOCD_PASSWORD = os.environ.get("GOCD_PASSWORD")
@@ -22,30 +24,14 @@ class Pipeline:
     def get_name(self):
         return self.name
 
-    def update_pipeline_status_from_api(self):
-        response = requests.get(GOCD_API_URL + '/pipelines/'+ self.name +'/status', auth=(GOCD_USER, GOCD_PASSWORD), verify=False)    
-        statusJson = json.loads(response.text)
-
-        if statusJson['paused'] is True:
-            self.status = 'paused'
-        elif statusJson['schedulable']:
-            self.status = 'schedulable'
-        elif statusJson['locked']:
-            self.status = 'locked'
-        else:
-            self.status = 'unknown'
-
-    @staticmethod
-    def extract_pipeline_name(full_pipeline_name):
-        splitted_build_locator = full_pipeline_name.split('/')
-        pipeline_name = splitted_build_locator[0]
-        return pipeline_name
-
     def add_job(self, job):
         self.jobs.append(job)
     
     def get_jobs(self):
         return self.jobs
+
+    def update_pipeline_status_from_api(self):
+        self.status = APIConsumer.get_pipeline_status_from_api(self.name)
 
     def __hash__(self):
         return hash((self.name))
