@@ -14,10 +14,10 @@ pipelines:
     stages:
       - UnitTests:
           environment_variables:
-            GOCD_API_URL=https://cd.teste.com.br:1234/go/api
-            GOCD_USER=testeuser
-            GOCD_PASSWORD=testpass
-            PORT=8888
+            GOCD_API_URL: https://cd.teste.com.br:1234/go/api
+            GOCD_USER: testeuser
+            GOCD_PASSWORD: testpass
+            PORT: 8888
           clean_workspace: true
           jobs:
             UnitTest:
