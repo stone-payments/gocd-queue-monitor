@@ -1,8 +1,5 @@
 import os
-import requests
-import json
-
-from app.services.APIConsumer import APIConsumer
+from src.app.services.APIConsumer import APIConsumer
 
 GOCD_API_URL = os.environ.get("GOCD_API_URL")
 GOCD_USER = os.environ.get("GOCD_USER")

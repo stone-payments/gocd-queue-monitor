@@ -1,4 +1,4 @@
-from app.models.Agent import Agent
+from src.app.models.Agent import Agent
 
 
 class AgentParser:

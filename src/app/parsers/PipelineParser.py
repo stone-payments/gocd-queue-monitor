@@ -1,5 +1,5 @@
-from app.models.Pipeline import Pipeline
-from app.models.Job import Job
+from src.app.models.Pipeline import Pipeline
+from src.app.models.Job import Job
 
 
 class PipelineParser:
