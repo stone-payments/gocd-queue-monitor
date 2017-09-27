@@ -9,6 +9,8 @@ pipelines:
       git-repo:
         git: git@github.com:stone-payments/gocd-queue-monitor.git
         branch: master
+        blacklist:
+        - README.md
     environment_variables:
       APP_NAME: gocd-queue-monitor
     stages:
