@@ -1,3 +1,4 @@
+import os
 import requests
 import json
 from ..utils.EnvironmentVariables import EnvironmentVariables
@@ -10,10 +11,13 @@ class APIConsumer:
 
     @staticmethod
     def get_scheduled_jobs_xml():
-        response = requests.get(env_vars.gocd_api_url() + '/jobs/scheduled.xml',
-                                auth=(env_vars.gocd_user(), env_vars.gocd_password()), verify=False)
-        xml = response.text
-        # xml = open("./test.xml")
+        # response = requests.get(env_vars.gocd_api_url() + '/jobs/scheduled.xml',
+        #                         auth=(env_vars.gocd_user(), env_vars.gocd_password()), verify=False)
+        # xml = response.text
+
+        basepath = os.path.dirname(__file__)
+        filepath = os.path.abspath(os.path.join(basepath, "..", "..", "..", "tests", "files", "test.xml"))
+        xml = open(filepath)
         soup = BeautifulSoup(xml, "xml")
         scheduled_jobs_xml = soup.find_all('job')
         return scheduled_jobs_xml
@@ -21,7 +25,7 @@ class APIConsumer:
     @staticmethod
     def get_api_version():
         headers = {'accept': "application/vnd.go.cd.v1+json"}
-        response = requests.get(env_vars.gocd_api_url() + '/version',
+        response = requests.get(env_vars.gocd_api_url() + '/api/version',
                                 auth=(env_vars.gocd_user(), env_vars.gocd_password()), headers=headers, verify=False)
         response_json = json.loads(response.text)
         version = response_json['version']
@@ -33,7 +37,7 @@ class APIConsumer:
 
         headers = {'accept': "application/vnd.go.cd.v4+json"}
 
-        response = requests.get(env_vars.gocd_api_url() + '/agents',
+        response = requests.get(env_vars.gocd_api_url() + '/api/agents',
                                 auth=(env_vars.gocd_user(), env_vars.gocd_password()), headers=headers, verify=False)
 
         response_json = json.loads(response.text)
@@ -43,7 +47,7 @@ class APIConsumer:
 
     @staticmethod
     def get_pipeline_status_from_api(pipeline_name):
-        response = requests.get(env_vars.gocd_api_url() + '/pipelines/'+ pipeline_name +'/status',
+        response = requests.get(env_vars.gocd_api_url() + '/api/pipelines/'+ pipeline_name +'/status',
                                 auth=(env_vars.gocd_user(), env_vars.gocd_password()), verify=False)
         statusJson = json.loads(response.text)
 

@@ -23,7 +23,7 @@
                 <ol>            
                     {% for pipeline in pipelines %}
                     <li>
-                        {{pipeline.name}} Status: 
+                        <a href="{{pipeline.link}}" target="_blank">{{pipeline.name}}</a> Status:
                         {% if pipeline.status is equalto 'paused' %}
                         <span class="badge badge-warning">Paused</span>                
                         {% endif%} 
@@ -45,6 +45,12 @@
                                     {% for resource in job.resources %}
                                         {{ resource }}
                                     {% endfor %} ]
+                                Environment:
+                                    {% if job.environment is equalto '' %}
+                                        <span class="badge badge-danger">No Environment</span>
+                                    {% else %}
+                                        {{ job.environment }}
+                                    {% endif%}
                             </li>
                             {% endfor %}        
                         </ul>
