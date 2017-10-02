@@ -8,7 +8,8 @@ class PipelineParser:
 
     def extract_pipeline_link(self, pipeline_name):
         env_vars = EnvironmentVariables()
-        link = env_vars.GOCD_API_URL + '/admin/pipelines/'+ pipeline_name + '/edit'
+        web_url = env_vars.GOCD_API_URL.replace('-vip','')
+        link = web_url + '/admin/pipelines/'+ pipeline_name + '/edit'
         return link
 
     def extract_pipeline_name(self, full_pipeline_name):

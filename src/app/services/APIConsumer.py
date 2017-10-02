@@ -11,13 +11,10 @@ class APIConsumer:
 
     @staticmethod
     def get_scheduled_jobs_xml():
-        # response = requests.get(env_vars.gocd_api_url() + '/jobs/scheduled.xml',
-        #                         auth=(env_vars.gocd_user(), env_vars.gocd_password()), verify=False)
-        # xml = response.text
+        response = requests.get(env_vars.gocd_api_url() + '/jobs/scheduled.xml',
+                                auth=(env_vars.gocd_user(), env_vars.gocd_password()), verify=False)
+        xml = response.text
 
-        basepath = os.path.dirname(__file__)
-        filepath = os.path.abspath(os.path.join(basepath, "..", "..", "..", "tests", "files", "test.xml"))
-        xml = open(filepath)
         soup = BeautifulSoup(xml, "xml")
         scheduled_jobs_xml = soup.find_all('job')
         return scheduled_jobs_xml
