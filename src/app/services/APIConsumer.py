@@ -11,7 +11,7 @@ class APIConsumer:
 
     @staticmethod
     def get_scheduled_jobs_xml():
-        response = requests.get(env_vars.gocd_api_url() + '/jobs/scheduled.xml',
+        response = requests.get(env_vars.gocd_api_url() + '/api/jobs/scheduled.xml',
                                 auth=(env_vars.gocd_user(), env_vars.gocd_password()), verify=False)
         xml = response.text
 
